@@ -1,0 +1,43 @@
+syntax = "proto3";
+option go_package = "proto";
+
+/**
+ * 快递100实时查询接口
+ * Post
+ */
+message LogisticQueryRequest {
+    // @inject_tag: form:"shop_id"
+    string shop_id = 1; // 必须
+    // @inject_tag: form:"company"
+    string company = 2;     // 必须 查询的快递公司的编码，一律用小写字母
+    // @inject_tag: form:"number"
+    string number = 3;     // 必须 查询的快递单号， 单号的最大长度是32个字符
+    // @inject_tag: form:"phone"
+    string phone = 4;   // 可选 收件人或寄件人的手机号或固话（顺丰单号必填，也可以填写后四位，如果是固话，请不要上传分机号）
+}
+
+message LogisticQueryData {
+    string context = 1;     // 物流轨迹节点内容
+    string time = 2;        // 时间，原始格式
+    string fTime = 3;       // 格式化后时间
+    string status = 4;      // 本数据元对应的签收状态。只有在开通签收状态服务（见上面"status"后的说明）且在订阅接口中提交resultv2标记后才会出现
+    string areaCode = 5;    // 本数据元对应的行政区域的编码，只有在开通签收状态服务（见上面"status"后的说明）且在订阅接口中提交resultv2标记后才会出现
+    string areaName = 6;    // 本数据元对应的行政区域的名称，开通签收状态服务（见上面"status"后的说明）且在订阅接口中提交resultv2标记后才会出现
+}
+
+message LogisticQueryResponse {
+    string state = 1;    // 快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态
+    string isCheck = 2;  // 是否签收标记
+    string company = 3;     // 快递公司编码,一律用小写字母，点击查看快递公司编码
+    string number = 4;      // 快递单号
+    repeated LogisticQueryData data = 5; // 数组，包含多个对象，每个对象字段如展开所示
+}
+
+message LogisticPermissionRequest {
+    // @inject_tag: form:"shop_id"
+    string shop_id = 1; // 必须
+}
+
+message LogisticPermissionResponse {
+    bool is_allow = 1;
+}
